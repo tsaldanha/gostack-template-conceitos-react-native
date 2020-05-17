@@ -16,15 +16,19 @@ export default function App() {
   const [repositories, setRepositories] = useState([]);
 
   async function handleLikeRepository(id) {
-    console.log(id);
-    api.post(`/repositories/${id}/like`)
-      .then(response => console.log(response.data))
+    const { data } = await api.post(`/repositories/${id}/like`)
+    const index  = repositories.findIndex(repository => repository.id === id);
+    if(index >= 0) {
+      repositories[index].likes = data.likes;
+      
+    }
+    console.log(repositories);
+    setRepositories([...repositories]);
   }
 
   useEffect(()=>{
     api.get("/repositories")
       .then((result) => {
-        console.log(result.data);
         setRepositories(result.data);
       });
   },[]);
@@ -54,7 +58,7 @@ export default function App() {
                   // Remember to replace "1" below with repository ID: {`repository-likes-${repository.id}`}
                   testID={`repository-likes-${repository.id}`}
                 >
-                  {repository.likes} curtidas
+                  {repository.likes} { repository.likes > 1 ? "curtidas" : "curtida"}
                 </Text>
               </View>
 
